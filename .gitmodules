@@ -1,0 +1,6 @@
+[submodule "repos/AWS-Serverless-02-shorten-link-frontend"]
+	path = repos/AWS-Serverless-02-shorten-link-frontend
+	url = git@github.com:hieunguyen0202/AWS-Serverless-02-shorten-link-frontend.git
+[submodule "repos/AWS-Serverless-02-shorten-link-backend"]
+	path = repos/AWS-Serverless-02-shorten-link-backend
+	url = git@github.com:hieunguyen0202/AWS-Serverless-02-shorten-link-backend.git
