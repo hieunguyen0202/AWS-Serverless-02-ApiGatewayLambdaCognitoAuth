@@ -45,6 +45,21 @@ variable "lambda_policy_name" {
   type        = string
 }
 
+variable "aws_account_id" {
+  description = "aws_account_id"
+  type        = string
+}
+
+
+
+
+# variable "stage_name" {
+#   description = "Stage name for deployment (e.g. dev)"
+#   type        = string
+# }
+
+
+
 
 ## lambda_func module
 variable "generate_short_url_function_name" {

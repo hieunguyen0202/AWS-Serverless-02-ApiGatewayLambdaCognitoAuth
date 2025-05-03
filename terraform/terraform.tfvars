@@ -5,7 +5,7 @@ table_name = "UrlShortenTable"
 ## security module
 lambda_role_name   = "AWS-Serverless-02-generate-short-url-func-role"
 lambda_policy_name = "AWS-Serverless-02-role-policy-dynamodb"
-
+aws_account_id     = "143735903781"
 
 
 ## lambda_func module

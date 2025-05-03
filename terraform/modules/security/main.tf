@@ -38,6 +38,11 @@ resource "aws_iam_role_policy_attachment" "attach_lambda_dynamodb_policy" {
 }
 
 
+resource "aws_iam_role_policy_attachment" "attach_cloudwatch_logs_policy" {
+  role       = aws_iam_role.lambda_dynamodb_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 
 
 resource "aws_lambda_permission" "allow_apigw_generate" {
@@ -45,7 +50,8 @@ resource "aws_lambda_permission" "allow_apigw_generate" {
   action        = "lambda:InvokeFunction"
   function_name = var.generate_lambda_function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${var.api_gateway_rest_api_arn}/*/*"
+  source_arn    = "arn:aws:execute-api:${var.aws_region}:${var.aws_account_id}:${var.api_gateway_rest_api_id}/${var.stage_name}/POST/api/generate-short-url"
+  # source_arn    = "${var.api_gateway_rest_api_arn}/*/*"
 }
 
 resource "aws_lambda_permission" "allow_apigw_get" {
@@ -53,5 +59,6 @@ resource "aws_lambda_permission" "allow_apigw_get" {
   action        = "lambda:InvokeFunction"
   function_name = var.get_lambda_function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${var.api_gateway_rest_api_arn}/*/*"
+  source_arn    = "arn:aws:execute-api:${var.aws_region}:${var.aws_account_id}:${var.api_gateway_rest_api_id}/${var.stage_name}/GET/link/*"
+  # source_arn    = "${var.api_gateway_rest_api_arn}/*/*"
 }

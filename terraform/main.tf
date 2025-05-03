@@ -28,10 +28,14 @@ module "api_gateway" {
 }
 
 module "security" {
-  source             = "./modules/security"
-  role_name          = var.lambda_role_name
-  policy_name        = var.lambda_policy_name
-  dynamodb_table_arn = module.dynamodb.dynamodb_table_arn
+  source                  = "./modules/security"
+  role_name               = var.lambda_role_name
+  policy_name             = var.lambda_policy_name
+  dynamodb_table_arn      = module.dynamodb.dynamodb_table_arn
+  aws_account_id          = var.aws_account_id
+  stage_name              = var.stage_name
+  api_gateway_rest_api_id = module.api_gateway.api_gateway_rest_api_id
+
 
   generate_lambda_function_name = module.lambda_func.generate_short_url_lambda_name
   get_lambda_function_name      = module.lambda_func.get_url_lambda_name
