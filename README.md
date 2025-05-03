@@ -295,40 +295,43 @@ jobs:
 #### Part 3: How to test API works
 
 - A client makes a POST request to /api/generate-short-url with a body like:
-        ```
+        
+    ```
         Using PortMAN
 
         https://ld05bg8x46.execute-api.ap-southeast-1.amazonaws.com/dev/api/generate-short-url
-        ```
+        
+    ```
 - With body
-        ```
+        
+    ```
         {
             "url": "https://dantri.com.vn/xa-hoi/cuu-giam-doc-cong-an-hai-phong-do-huu-ca-va-ong-pham-xuan-thang-duoc-dac-xa-20250429160106555.htm"
         }
 
-        ```
+    ```
 
 - The response will be something like:
 
-        ```
+    ```
         {
             "short_url_code": "3Olih97ScYdpNg4"
         }
 
-        ```
+    ```
 - User opens a shortened link like:
 
-        ```
+    ```
         https://ld05bg8x46.execute-api.ap-southeast-1.amazonaws.com/dev/link/3Olih97ScYdpNg4
         
-        ```
+    ```
 - The API Gateway routes /link/{short_url} to this Lambda.
 - Lambda looks up `3Olih97ScYdpNg4` in DynamoDB. If it exists, the user is redirected (HTTP 308) to the original long URL:
 
-        ```
+    ```
         https://dantri.com.vn/xa-hoi/cuu-giam-doc-cong-an-hai-phong-do-huu-ca-va-ong-pham-xuan-thang-duoc-dac-xa-20250429160106555.htm
         
-        ```
+    ```
 
 #### Part 4: Auto Setup stack Lambda + API Gateway + Cognito with Terraform
 
