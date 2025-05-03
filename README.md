@@ -13,8 +13,8 @@
         - Backend application responsible for generating a shortened link from a given URL.
         - Tech stack used: API Gateway, AWS Lambda, DynamoDB.
         - API structure:
-            - /api/generate-short-url: receives a URL and returns a shortened ID for that URL.
-            - /link/<id> where id is the shortened code of the original link. This endpoint searches for the ID in the DynamoDB table; if a match is found, it returns the original URL and redirects the user’s browser to that link.
+            - `/api/generate-short-url`: receives a URL and returns a shortened ID for that URL.
+            - `/link/<id>` where id is the shortened code of the original link. This endpoint searches for the ID in the DynamoDB table; if a match is found, it returns the original URL and redirects the user’s browser to that link.
 
 
 
@@ -254,6 +254,25 @@ jobs:
     - Choose `Create a new role with basic Lambda permissions`
     - Click on Create Functions
 
+
+- Step 4: How to test API works
+    - A client makes a POST request to /api/generate-short-url with a body like:
+
+        ```
+        {
+        "url": "https://www.example.com/very-long-article"
+        }
+
+        ```
+
+    - The response will be something like:
+
+        ```
+        {
+        "short_url_code": "A1b2C3d4E5f6G7h"
+        }
+
+        ```
 
 #### Part 2: Auto Setup stack Lambda + API Gateway + Cognito with terraform
 
