@@ -212,21 +212,12 @@ jobs:
     ```
 
 
-- Step 2: Setup Lambda Function for `generate_short_url` backend
-    - Select `Author from scratch`
-    - Create new function with name `AWS-Serverless-02-generate-short-url-func`
-    - And past the code backend from `repos/AWS-Serverless-02-shorten-link-backend/generate_short_url/app.py`
-    - Choose runtime `Python 3.9`
-    - Choose `Create a new role with basic Lambda permissions`
-    - Click on Create Functions
-
-
-- Step optional: Steps to Fix in AWS Console
+- Step 2: Create role for Lambda Func with DynamoDB
     - Go to IAM > Roles in the AWS Console.
-    - Search for the role mentioned in the error message: `AWS-Serverless-02-generate-short-url-func-role-5xzubgbf`
+    - Search for the role mentioned in the error message: `AWS-Serverless-02-generate-short-url-func-role`
     - Click the role to open it.
     - Click `Add permissions` → `Attach policies`.
-    - Choose `Create inline policy` (or update existing one).
+    - Choose `Create inline policy` (or update existing one) with name `AWS-Serverless-02-role-policy-dynamodb`.
     - Use the following policy to give access only to your table:
 
     ```
@@ -236,9 +227,10 @@ jobs:
             {
             "Effect": "Allow",
             "Action": [
-                "dynamodb:PutItem"
+                "dynamodb:PutItem",
+                "dynamodb:GetItem"
             ],
-            "Resource": "arn:aws:dynamodb:ap-southeast-1:143735903781:table/UrlShortenTable"
+            "Resource": "arn:aws:dynamodb:ap-southeast-1:143735903781:table/UrlShortenTable" -> Change depend output from step 1
             }
         ]
     }
@@ -246,74 +238,51 @@ jobs:
     ```
 
 
-- Step 3: Setup Lambda Function for `get_url` backend
+- Step 3: Setup Lambda Function for `generate_short_url` backend
+    - Select `Author from scratch`
+    - Create new function with name `AWS-Serverless-02-generate-short-url-func`
+    - And past the code backend from `repos/AWS-Serverless-02-shorten-link-backend/generate_short_url/app.py`
+    - Choose runtime `Python 3.9`
+    - Choose existing role `AWS-Serverless-02-generate-short-url-func-role`
+    - Click on Create Functions
+
+
+- Step 4: Setup Lambda Function for `get_url` backend
     - Select `Author from scratch`
     - Create new function with name `AWS-Serverless-02-get-url-func`
     - And past the code backend from `repos/AWS-Serverless-02-shorten-link-backend/get_url/app.py`
     - Choose runtime `Python 3.9`
-    - Choose `Create a new role with basic Lambda permissions`
+    - Choose existing role `AWS-Serverless-02-generate-short-url-func-role`
     - Click on Create Functions
 
-
-- Step 4: How to test API works
-    - A client makes a POST request to /api/generate-short-url with a body like:
-
-        ```
-        {
-            "url": "https://www.example.com/very-long-article"
-        }
-
-        ```
-
-    - The response will be something like:
-
-        ```
-        {
-            "short_url_code": "A1b2C3d4E5f6G7h"
-        }
-
-        ```
-    - User opens a shortened link like:
-
-        ```
-        https://short.domain.com/link/A1b2C3d4
-        
-        ```
-    - The API Gateway routes /link/{short_url} to this Lambda.
-    - Lambda looks up A1b2C3d4 in DynamoDB. If it exists, the user is redirected (HTTP 308) to the original long URL:
-
-        ```
-        https://www.example.com/very-long-page
-        
-        ```
 
 #### Part 2: Step-by-Step Guide: API Gateway → Lambda Integration on Stage dev
 
 - Step 1: Create or Use an Existing API
     - Go to API Gateway in AWS Console.
-    - Choose or create a REST API (like `url-shorten-app`).
+    - Choose or create a REST API (with name `AWS-Serverless-02-api-gateway`).
 
 - Step 2: Create Resources and Methods
-    - Create a resource like /api or /link.
+    - Create a resource like `/api` and `/link` under `/` .
     - Under that resource, add:
-        - POST /api/generate-short-url
-        - GET /link/{short_url}
+        - POST `/api/generate-short-url`
+        - GET `/link/{short_url}`
     - To do this:
         - Select the resource (e.g., /api)
-        - Click “Create Method” → choose POST → click ✓.
+        - Click “Create Method” → choose POST
         - Select Integration type = Lambda Function.
         - Enable Lambda Proxy Integration.
-        - Enter the Lambda function name (generate_short_url) and click Save.
+        - Enter the Lambda function name `AWS-Serverless-02-generate-short-url-func` and click Save.
         - Grant permissions when prompted.
-        - Repeat the above for the GET /link/{short_url} endpoint with the other Lambda function.
+        - Repeat the above for the GET /link/{short_url} endpoint with the other Lambda function `AWS-Serverless-02-get-url-func`.
 
 - Step 3: Deploy to a Stage (e.g., dev)
     - Click the “Actions” dropdown at the top.
     - Select Deploy API.
     - Choose:
-        - Deployment stage: dev (or create one if not exists)
-        - Stage name: dev
-        - (Optional) Add stage description
+        - Deployment stage: `dev` (or create one if not exists)
+        - Stage name: `dev`
+        - (Optional) Add stage description `dev_version{1/2/3...}`
     - Click Deploy.
     - Your API will now be accessible at a URL like:
 
@@ -322,6 +291,45 @@ jobs:
     
     ```
 
-#### Part 3: Auto Setup stack Lambda + API Gateway + Cognito with terraform
+
+#### Part 3: How to test API works
+
+- A client makes a POST request to /api/generate-short-url with a body like:
+        ```
+        Using PortMAN
+
+        https://ld05bg8x46.execute-api.ap-southeast-1.amazonaws.com/dev/api/generate-short-url
+        ```
+- With body
+        ```
+        {
+            "url": "https://dantri.com.vn/xa-hoi/cuu-giam-doc-cong-an-hai-phong-do-huu-ca-va-ong-pham-xuan-thang-duoc-dac-xa-20250429160106555.htm"
+        }
+
+        ```
+
+- The response will be something like:
+
+        ```
+        {
+            "short_url_code": "3Olih97ScYdpNg4"
+        }
+
+        ```
+- User opens a shortened link like:
+
+        ```
+        https://ld05bg8x46.execute-api.ap-southeast-1.amazonaws.com/dev/link/3Olih97ScYdpNg4
+        
+        ```
+- The API Gateway routes /link/{short_url} to this Lambda.
+- Lambda looks up `3Olih97ScYdpNg4` in DynamoDB. If it exists, the user is redirected (HTTP 308) to the original long URL:
+
+        ```
+        https://dantri.com.vn/xa-hoi/cuu-giam-doc-cong-an-hai-phong-do-huu-ca-va-ong-pham-xuan-thang-duoc-dac-xa-20250429160106555.htm
+        
+        ```
+
+#### Part 4: Auto Setup stack Lambda + API Gateway + Cognito with Terraform
 
 
