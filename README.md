@@ -260,7 +260,7 @@ jobs:
 
         ```
         {
-        "url": "https://www.example.com/very-long-article"
+            "url": "https://www.example.com/very-long-article"
         }
 
         ```
@@ -269,11 +269,59 @@ jobs:
 
         ```
         {
-        "short_url_code": "A1b2C3d4E5f6G7h"
+            "short_url_code": "A1b2C3d4E5f6G7h"
         }
 
         ```
+    - User opens a shortened link like:
 
-#### Part 2: Auto Setup stack Lambda + API Gateway + Cognito with terraform
+        ```
+        https://short.domain.com/link/A1b2C3d4
+        
+        ```
+    - The API Gateway routes /link/{short_url} to this Lambda.
+    - Lambda looks up A1b2C3d4 in DynamoDB. If it exists, the user is redirected (HTTP 308) to the original long URL:
+
+        ```
+        https://www.example.com/very-long-page
+        
+        ```
+
+#### Part 2: Step-by-Step Guide: API Gateway → Lambda Integration on Stage dev
+
+- Step 1: Create or Use an Existing API
+    - Go to API Gateway in AWS Console.
+    - Choose or create a REST API (like `url-shorten-app`).
+
+- Step 2: Create Resources and Methods
+    - Create a resource like /api or /link.
+    - Under that resource, add:
+        - POST /api/generate-short-url
+        - GET /link/{short_url}
+    - To do this:
+        - Select the resource (e.g., /api)
+        - Click “Create Method” → choose POST → click ✓.
+        - Select Integration type = Lambda Function.
+        - Enable Lambda Proxy Integration.
+        - Enter the Lambda function name (generate_short_url) and click Save.
+        - Grant permissions when prompted.
+        - Repeat the above for the GET /link/{short_url} endpoint with the other Lambda function.
+
+- Step 3: Deploy to a Stage (e.g., dev)
+    - Click the “Actions” dropdown at the top.
+    - Select Deploy API.
+    - Choose:
+        - Deployment stage: dev (or create one if not exists)
+        - Stage name: dev
+        - (Optional) Add stage description
+    - Click Deploy.
+    - Your API will now be accessible at a URL like:
+
+    ```
+    https://<api-id>.execute-api.<region>.amazonaws.com/dev/api/generate-short-url
+    
+    ```
+
+#### Part 3: Auto Setup stack Lambda + API Gateway + Cognito with terraform
 
 
