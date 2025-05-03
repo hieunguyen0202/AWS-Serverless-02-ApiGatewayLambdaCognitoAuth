@@ -1,5 +1,9 @@
 ## URL Shortener Platform - AWS Architecture Documentation
 
+### Architure Design
+![alt text](AWS-Serverless-02-ApiGatewayLambdaCognitoAuth.drawio.svg)
+
+
 ### Overview Project
 
 - The project include 2 parts
@@ -179,9 +183,6 @@ jobs:
 
 ```
 
-
-### Architure Design
-![alt text](AWS-Serverless-02-ApiGatewayLambdaCognitoAuth.drawio.svg)
 
 ### Implement step
 
