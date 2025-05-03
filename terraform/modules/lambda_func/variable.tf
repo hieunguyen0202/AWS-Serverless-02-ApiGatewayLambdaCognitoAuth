@@ -1,3 +1,9 @@
+variable "aws_region" {
+  description = "AWS region to deploy resources"
+  type        = string
+  default     = "ap-southeast-1"
+}
+
 variable "generate_short_url_function_name" {
   description = "Lambda function name for generating short URLs"
   type        = string

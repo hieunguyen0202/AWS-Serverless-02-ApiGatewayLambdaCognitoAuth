@@ -56,3 +56,15 @@ variable "get_url_function_name" {
   type        = string
   description = "Lambda function name for retrieving original URL"
 }
+
+## api_gateway module
+
+variable "api_name" {
+  description = "Name of the API Gateway"
+  type        = string
+}
+
+variable "stage_name" {
+  description = "Stage name for deployment (e.g. dev)"
+  type        = string
+}
