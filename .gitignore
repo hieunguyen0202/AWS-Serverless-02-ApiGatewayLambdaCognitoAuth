@@ -1,0 +1,24 @@
+# Ignore Terraform state files
+terraform/*.tfstate
+terraform/*.tfstate.backup
+
+# Ignore Terraform plan files
+terraform/*.tfplan
+
+# Ignore crash logs
+terraform/crash.log
+
+# Ignore override files as they are usually used for testing
+terraform/*.override.tf
+terraform/*.override.tf.json
+
+# Ignore .terraform directories (Terraform init cache)
+terraform/.terraform/
+terraform/modules/*/.terraform/
+
+# Ignore any sensitive variable auto files
+terraform/*.auto.tfvars
+terraform/*.auto.tfvars.json
+
+# Optional: Ignore generated Lambda ZIPs (if not tracked)
+terraform/modules/lambda_func/*.zip
